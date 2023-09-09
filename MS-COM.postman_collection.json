@@ -1,0 +1,659 @@
+{
+	"info": {
+		"_postman_id": "f6270050-fe75-4adb-ad3f-f93a0d22a3fd",
+		"name": "MS-COM",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21553754"
+	},
+	"item": [
+		{
+			"name": "Message",
+			"item": [
+				{
+					"name": "Obtener mensajes",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 200\", function () {",
+									"  pm.expect(pm.response.code).to.equal(200);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Response body is an array\", function () {",
+									"  const responseData = pm.response.json();",
+									"  ",
+									"  pm.expect(responseData).to.be.an('array');",
+									"});",
+									"",
+									"",
+									"pm.test(\"Id should be a non-negative integer\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData).to.be.an('array');",
+									"    ",
+									"    responseData.forEach(function (item) {",
+									"        pm.expect(item.id).to.be.a('number').and.to.be.at.least(0);",
+									"    });",
+									"});",
+									"",
+									"",
+									"pm.test(\"Validate the uuid is a non-empty string\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData).to.be.an('array');",
+									"    responseData.forEach(function(item){",
+									"        pm.expect(item.uuid).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Uuid should not be empty\");",
+									"    });",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:4000/message/44f78af5-1b58-4d00-8c6f-9f4ce0e6e049",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"message",
+								"44f78af5-1b58-4d00-8c6f-9f4ce0e6e049"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear mensaje",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let iActual = parseInt(pm.environment.get(\"indice\"));",
+									"let mensajes = JSON.parse(pm.environment.get(\"mensajes\"));",
+									"",
+									"let mensaje = mensajes[iActual];",
+									"console.log(iActual)",
+									"console.log(mensaje)",
+									"",
+									"pm.test(`Status code: ${mensaje.status}`, function () {",
+									"    pm.response.to.have.status(mensaje.status);",
+									"});",
+									"",
+									"if (mensaje.status == 400) {",
+									"",
+									"    if(mensaje.guestId != '') {",
+									"        pm.test(\"Error en GUID - guestId\", function () {",
+									"            const responseBody = pm.response.text();",
+									"            const guidRegex = /^\\\"[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}\\\"$/;",
+									"            pm.expect(responseBody.guestId).to.not.match(guidRegex);",
+									"        });",
+									"    }",
+									"",
+									"    if(mensaje.hostId != '') {",
+									"        pm.test(\"Error en GUID - hostId\", function () {",
+									"            const responseBody = pm.response.text();",
+									"            const guidRegex = /^\\\"[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}\\\"$/;",
+									"            pm.expect(responseBody.hostId).to.not.match(guidRegex);",
+									"        });",
+									"    }",
+									"",
+									"    if (mensaje.message == '') {",
+									"        pm.test(\"Error Name empty\", function () {",
+									"            const responseBody = pm.response.json();",
+									"            pm.expect(responseBody.error).to.include('Bad Request');",
+									"        });",
+									"",
+									"    }",
+									"    ",
+									"}",
+									"",
+									"iActual = iActual + 1;",
+									"if (iActual >= mensajes.length) {",
+									"    iActual = 0;",
+									"}",
+									"pm.environment.set(\"indice\", iActual);",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"",
+									"// pm.test(\"Response status code is 201\", function () {",
+									"//   pm.response.to.have.status(201);",
+									"// });",
+									"",
+									"",
+									"// pm.test(\"Response has the required field - status\", function () {",
+									"//   const responseData = pm.response.json();",
+									"  ",
+									"//   pm.expect(responseData).to.be.an('object');",
+									"//   pm.expect(responseData.status).to.exist.and.to.be.a('number');",
+									"// });",
+									"",
+									"",
+									"// pm.test(\"Status is a number\", function () {",
+									"//   const responseData = pm.response.json();",
+									"  ",
+									"//   pm.expect(responseData.status).to.be.a('number');",
+									"// });",
+									"",
+									"",
+									"// pm.test(\"Status is equal to 0\", function () {",
+									"//   const responseData = pm.response.json();",
+									"",
+									"//   pm.expect(responseData.status).to.equal(0);",
+									"// });",
+									"",
+									"",
+									"// pm.test(\"Response time is in an acceptable range\", function () {",
+									"//     pm.expect(pm.response.responseTime).to.be.below(500);",
+									"// });"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let mensajes = JSON.parse(pm.environment.get(\"mensajes\"));\r",
+									"let iActual = parseInt(pm.environment.get(\"indice\"));\r",
+									"\r",
+									"if(iActual >= mensajes.length){\r",
+									"    iActual = 0;\r",
+									"}\r",
+									"\r",
+									"let mensaje = mensajes[iActual];\r",
+									"console.log(mensaje)\r",
+									"\r",
+									"pm.environment.set(\"guestId\", mensaje.guestId);\r",
+									"pm.environment.set(\"hostId\", mensaje.hostId);\r",
+									"pm.environment.set(\"message\", mensaje.message);\r",
+									"pm.environment.set(\"chaId\", mensaje.chatId);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"chatId\": \"{{chatId}}\",\r\n    \"hostId\": \"{{hostId}}\",\r\n    \"guestId\": \"{{guestId}}\",\r\n    \"message\": \"{{message}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:4000/message/create",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"message",
+								"create"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Chat",
+			"item": [
+				{
+					"name": "Obtener chat huesped",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let iActual = parseInt(pm.environment.get(\"indiceObtenerChatHuesped\"));",
+									"let guests = JSON.parse(pm.environment.get(\"arrayGuest\"));",
+									"let guest = guests[iActual];",
+									"console.log(guest)",
+									"",
+									"if (guest.guestId == '') {",
+									"    pm.test(`Status code: ${guest.status}`, function () {",
+									"        pm.response.to.have.status(404);",
+									"    });",
+									"}",
+									"if (guest.guestId != '') {",
+									"    pm.test(`Status code: ${guest.status}`, function () {",
+									"        console.log",
+									"        pm.response.to.have.status(parseInt(guest.status));",
+									"    });",
+									"}",
+									"",
+									"if(guest.status == 200) {",
+									"    pm.test(\"Response body es un array\", function () {",
+									"        pm.expect(pm.response.json()).to.be.an('array');",
+									"    });",
+									"",
+									"    pm.test(\"Verifique que el campo de marca de tiempo tenga un formato de fecha válido\", function () {",
+									"        const responseData = pm.response.json();",
+									"",
+									"        pm.expect(responseData).to.be.an('array');",
+									"        responseData.forEach(function (item) {",
+									"            pm.expect(item.timestamp).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$/, \"La marca de tiempo no tiene un formato de fecha válido\");",
+									"        });",
+									"    });",
+									"",
+									"    pm.test(\"Validar que el campo 'uuid' sea una cadena no vacía\", function () {",
+									"        const responseData = pm.response.json();",
+									"        pm.expect(responseData).to.be.an('array');",
+									"        responseData.forEach(function(item) {",
+									"            pm.expect(item.uuid).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"El valor no debe estar vacío\");",
+									"        });",
+									"    });",
+									"}",
+									"",
+									"iActual = iActual + 1;",
+									"if (iActual >= guests.length) {",
+									"    iActual = 0;",
+									"}",
+									"pm.environment.set(\"indiceObtenerChatHuesped\", iActual);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let guests = JSON.parse(pm.environment.get(\"arrayGuest\"));\r",
+									"let iActual = parseInt(pm.environment.get(\"indiceObtenerChatHuesped\"));\r",
+									"\r",
+									"if(iActual >= guests.length){\r",
+									"    iActual = 0;\r",
+									"}\r",
+									"\r",
+									"let guest = guests[iActual];\r",
+									"\r",
+									"pm.environment.set(\"guestIdParam\", guest.guestId);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:4000/chat/guest/13a02f9c-a037-4b43-88c4-34352f14abd0",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"chat",
+								"guest",
+								"13a02f9c-a037-4b43-88c4-34352f14abd0"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener chats",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code es 200\", function () {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"",
+									"",
+									"pm.test(\"uuid es una cadena no vacía\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    responseData.forEach(function (chat) {",
+									"        pm.expect(chat.uuid).to.be.a('string').and.to.have.lengthOf.at.least(1, \"El valor no debe estar vacío.\");",
+									"    });",
+									"});",
+									"",
+									"",
+									"pm.test(\"hostId y guestId son cadenas no vacías\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData).to.be.an('array');",
+									"    responseData.forEach(function (chat) {",
+									"        pm.expect(chat.hostId).to.be.a('string').and.to.have.lengthOf.at.least(1, \"hostId no debe estar vacío\");",
+									"        pm.expect(chat.guestId).to.be.a('string').and.to.have.lengthOf.at.least(1, \"guestId no debe estar vacío\");",
+									"    });",
+									"});",
+									"",
+									"",
+									"pm.test(\"El nombre es una cadena no vacía\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData).to.be.an('array');",
+									"    responseData.forEach(function(chat) {",
+									"        pm.expect(chat.name).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Nombre no debe estar vacío\");",
+									"    });",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:4000/chats",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"chats"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener chat anfitrion",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let iActual = parseInt(pm.environment.get(\"indiceObtenerChatAnfitrion\"));",
+									"let hosts = JSON.parse(pm.environment.get(\"arrayHost\"));",
+									"let host = hosts[iActual];",
+									"",
+									"if (iActual >= 0 && iActual < hosts.length) {",
+									"    let host = hosts[iActual];",
+									"    if (host.hostId == '') {",
+									"        pm.test(`Status code: ${host.status}`, function () {",
+									"            pm.response.to.have.status(404);",
+									"        });",
+									"    }",
+									"    if (host.hostId != '') {",
+									"        pm.test(`Status code: ${host.status}`, function () {",
+									"            console.log",
+									"            pm.response.to.have.status(parseInt(host.status));",
+									"        });",
+									"    }",
+									"",
+									"    if(host.status == 200) {",
+									"        pm.test(\"Response body es un array\", function () {",
+									"            pm.expect(pm.response.json()).to.be.an('array');",
+									"        });",
+									"",
+									"        pm.test(\"Verifique que el campo de marca de tiempo tenga un formato de fecha válido\", function () {",
+									"            const responseData = pm.response.json();",
+									"",
+									"            pm.expect(responseData).to.be.an('array');",
+									"            responseData.forEach(function (item) {",
+									"                pm.expect(item.timestamp).to.match(/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$/, \"La marca de tiempo no tiene un formato de fecha válido\");",
+									"            });",
+									"        });",
+									"",
+									"        pm.test(\"Validar que el campo 'uuid' sea una cadena no vacía\", function () {",
+									"            const responseData = pm.response.json();",
+									"            pm.expect(responseData).to.be.an('array');",
+									"            responseData.forEach(function(item) {",
+									"                pm.expect(item.uuid).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"El valor no debe estar vacío\");",
+									"            });",
+									"        });",
+									"    }",
+									"",
+									"iActual = iActual + 1;",
+									"if (iActual >= hosts.length) {",
+									"    iActual = 0;",
+									"}",
+									"pm.environment.set(\"indiceObtenerChatAnfitrion\", iActual);",
+									"} else {",
+									"    console.error(\"El índice iActual está fuera del rango válido.\");",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let hosts = JSON.parse(pm.environment.get(\"arrayHost\"));\r",
+									"let iActual = parseInt(pm.environment.get(\"indiceObtenerChatAnfitrion\"));\r",
+									"if(iActual >= hosts.length){\r",
+									"    iActual = 0;\r",
+									"}\r",
+									"\r",
+									"let host = hosts[iActual];\r",
+									"\r",
+									"pm.environment.set(\"hostIdParam\", host.hostId);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:4000/chat/host/{{hostIdParam}}",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"chat",
+								"host",
+								"{{hostIdParam}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear chat Testing",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let chats = JSON.parse(pm.environment.get(\"chats\"));\r",
+									"let iActual = parseInt(pm.environment.get(\"indiceCrearChat\"));\r",
+									"\r",
+									"if(iActual >= chats.length){\r",
+									"    iActual = 0;\r",
+									"}\r",
+									"\r",
+									"let item = chats[iActual];\r",
+									"\r",
+									"pm.environment.set(\"name\", item.name);\r",
+									"pm.environment.set(\"guestId\", item.guestId);\r",
+									"pm.environment.set(\"hostId\", item.hostId);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let iActual = parseInt(pm.environment.get(\"indiceCrearChat\"));\r",
+									"let chats = JSON.parse(pm.environment.get(\"chats\"));\r",
+									"\r",
+									"let chat = chats[iActual];\r",
+									"console.log(chat)\r",
+									"\r",
+									"pm.test(`Status code: ${chat.status}`, function () {\r",
+									"    pm.response.to.have.status(chat.status);\r",
+									"});\r",
+									"\r",
+									"if (chat.status == 400) {\r",
+									"\r",
+									"    if(chat.guestId != '') {\r",
+									"        pm.test(\"Error en GUID - guestId\", function () {\r",
+									"            const responseBody = pm.response.text();\r",
+									"            console.log\r",
+									"            const guidRegex = /^\\\"[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}\\\"$/;\r",
+									"            pm.expect(responseBody.guestId).to.not.match(guidRegex);\r",
+									"        });\r",
+									"    }\r",
+									"\r",
+									"    if(chat.hostId != '') {\r",
+									"        pm.test(\"Error en GUID - hostId\", function () {\r",
+									"            const responseBody = pm.response.text();\r",
+									"            console.log\r",
+									"            const guidRegex = /^\\\"[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}\\\"$/;\r",
+									"            pm.expect(responseBody.hostId).to.not.match(guidRegex);\r",
+									"        });\r",
+									"    }\r",
+									"\r",
+									"    if (chat.name == '') {\r",
+									"        pm.test(\"Error Name empty\", function () {\r",
+									"            const responseBody = pm.response.json();\r",
+									"            console.log(responseBody);\r",
+									"            pm.expect(responseBody.error).to.include('Bad Request');\r",
+									"        });\r",
+									"\r",
+									"    }\r",
+									"\r",
+									"    if (chat.name != '') {\r",
+									"        pm.test(\"Error name invalid\", function () {\r",
+									"            const responseBody = pm.response.text();\r",
+									"            console.log\r",
+									"            const guidRegex = /^\"[A-Za-z0-9]{1,50}\"$/;\r",
+									"            pm.expect(responseBody.name).to.not.match(guidRegex);\r",
+									"        });\r",
+									"    }\r",
+									"    \r",
+									"}\r",
+									"\r",
+									"iActual = iActual + 1;\r",
+									"if (iActual >= chats.length) {\r",
+									"    iActual = 0;\r",
+									"}\r",
+									"pm.environment.set(\"indiceCrearChat\", iActual);\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"guestId\": \"{{guestId}}\",\r\n  \"hostId\": \"{{hostId}}\",\r\n  \"name\": \"{{name}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:4000/chat/create",
+							"host": [
+								"localhost"
+							],
+							"port": "4000",
+							"path": [
+								"chat",
+								"create"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
